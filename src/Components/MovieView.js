@@ -1,4 +1,9 @@
-const MovieView = (props) => {
+import axios from "axios";
+import {logDOM} from "@testing-library/react";
+import ReviewList from "./ReviewList";
+
+
+const MovieView = props => {
     return <div
         className={"current-movie"}
         id={"current-movie"}>
@@ -8,8 +13,12 @@ const MovieView = (props) => {
         <p>
             {props.movie.genre} | {props.movie.actors}</p>
         <p>{props.movie.plot}</p>
-        <p>{props.movie.reviews}</p>
-
+        <div
+        > {
+            //reviews go here
+            (props.review.length > 0 && <ReviewList
+                reviews={props.review} />)
+        }</div>
         <br/>
         Leave a Review:
         <form onSubmit={(event) => this.props.sendReview(event.target.review.value)}>

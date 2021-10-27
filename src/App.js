@@ -18,13 +18,35 @@ class App extends React.Component {
         })
     }
 
-    async sendReview(event){
-        axios.post("http://localhost:3001/reviews", + event.target.review.value).then(
+
+    async getReviews(movieId){
+        await axios.get("http://localhost:3001/reviews/" + movieId)
+            .then((value) => this.setState({currentReviews: value.data}))
+    }
+    //
+    // async getSearchedResults(event) {
+    //     // let url = "http://localhost:3001/search?query=" + event.target.query.value;
+    //     const response = await fetch(url);
+    //     const JSONResponse = await response.json();
+    //     this.setState({inboxEmails: JSONResponse});
+    // }
+
+
+
+    async sendReview(event, movieId){
+        event.preventDefault();
+        let review = {
+            email: 'johndoe@gmail.com',
+            movieId: movieId,
+            reviewTitle: 'test title',
+            reviewText: event.target.review.value
+        }
+        await axios.post("http://localhost:3001/reviews", review).then(
             function (reponse ){
                 console.log(reponse)
             }
-        )
 
+        )
     }
 
     constructor(props) {
@@ -48,9 +70,9 @@ class App extends React.Component {
         this.setState({currentMovie: {}})
     }
 
+
     searchMovie(userSearch){
         userSearch.preventDefault()
-        console.log(userSearch.target.query.value)
         let userSearchText =  userSearch.target.query.value;
         let newMovies = this.state.movies.slice();
         let foundMovies = []
@@ -64,10 +86,15 @@ class App extends React.Component {
 
     render() {
         if (Object.keys(this.state.currentMovie).length > 0) {
+            {console.log(this.state.currentReviews)}
             return (
+
                 <MovieView
                     movie={this.state.currentMovie}
                     returnButton={() => this.returnToMainMenu()}
+                    sendReview={(event, movieId) => this.sendReview(event, movieId)}
+                    getMovieReview={(movieId) => this.getReviews(movieId)}
+                    review={this.state.currentReviews}
                 />
             )
         } else if (this.state.movies) {
